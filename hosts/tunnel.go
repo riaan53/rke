@@ -87,7 +87,7 @@ func parsePrivateKey(keyBuff string) (ssh.Signer, error) {
 	return ssh.ParsePrivateKey([]byte(keyBuff))
 }
 
-func getSSHConfig(username, sshPrivateKeyString string, useAgentAuth bool) (*ssh.ClientConfig, error) {
+func getSSHConfig(username, sshPrivateKeyString string, sshCertificateString string, useAgentAuth bool) (*ssh.ClientConfig, error) {
 	config := &ssh.ClientConfig{
 		User:            username,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
@@ -112,6 +112,23 @@ func getSSHConfig(username, sshPrivateKeyString string, useAgentAuth bool) (*ssh
 	if err != nil {
 		return config, err
 	}
+
+	if len(sshCertificateString) > 0 {
+		key, _, _, rest, err := ssh.ParseAuthorizedKey([]byte(sshCertificateString))
+		if err != nil || len(rest) > 0 {
+			return config, fmt.Errorf("Unable to parse SSH certificate: %v", err)
+		}
+
+		if cert, ok := key.(*ssh.Certificate); ok {
+			signer, err = ssh.NewCertSigner(cert, signer)
+			if err != nil {
+				return config, err
+			}
+		} else {
+			return config, fmt.Errorf("Unable to cast public key to SSH Certificate")
+		}
+	}
+
 	config.Auth = append(config.Auth, ssh.PublicKeys(signer))
 
 	return config, nil
@@ -124,6 +141,17 @@ func privateKeyPath(sshKeyPath string) (string, error) {
 	buff, err := ioutil.ReadFile(sshKeyPath)
 	if err != nil {
 		return "", fmt.Errorf("Error while reading SSH key file: %v", err)
+	}
+	return string(buff), nil
+}
+
+func certificatePath(sshCertPath string) (string, error) {
+	if sshCertPath[:2] == "~/" {
+		sshCertPath = filepath.Join(userHome(), sshCertPath[2:])
+	}
+	buff, err := ioutil.ReadFile(sshCertPath)
+	if err != nil {
+		return "", fmt.Errorf("Error while reading SSH certificate file: %v", err)
 	}
 	return string(buff), nil
 }

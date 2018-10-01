@@ -17,6 +17,8 @@ type RancherKubernetesEngineConfig struct {
 	SystemImages RKESystemImages `yaml:"system_images" json:"systemImages,omitempty"`
 	// SSH Private Key Path
 	SSHKeyPath string `yaml:"ssh_key_path" json:"sshKeyPath,omitempty"`
+	// SSH Certificate Path
+	SSHCertPath string `yaml:"ssh_cert_path" json:"SSHCertPath,omitempty"`
 	// SSH Agent Auth enable
 	SSHAgentAuth bool `yaml:"ssh_agent_auth" json:"sshAgentAuth"`
 	// Authorization mode configuration used in the cluster
@@ -56,6 +58,10 @@ type BastionHost struct {
 	SSHKey string `yaml:"ssh_key" json:"sshKey,omitempty" norman:"type=password"`
 	// SSH Private Key Path
 	SSHKeyPath string `yaml:"ssh_key_path" json:"sshKeyPath,omitempty"`
+	// SSH Certificate
+	SSHCert string `yaml:"ssh_cert" json:"sshCert,omitempty"`
+	// SSH Certificate Path
+	SSHCertPath string `yaml:"ssh_cert_path" json:"sshCertPath,omitempty"`
 }
 
 type PrivateRegistry struct {
@@ -145,6 +151,10 @@ type RKEConfigNode struct {
 	SSHKey string `yaml:"ssh_key" json:"sshKey,omitempty" norman:"type=password"`
 	// SSH Private Key Path
 	SSHKeyPath string `yaml:"ssh_key_path" json:"sshKeyPath,omitempty"`
+	// SSH Certificate
+	SSHCert string `yaml:"ssh_cert" json:"sshCert,omitempty"`
+	// SSH Certificate Path
+	SSHCertPath string `yaml:"ssh_cert_path" json:"sshCertPath,omitempty"`
 	// Node Labels
 	Labels map[string]string `yaml:"labels" json:"labels,omitempty"`
 }
