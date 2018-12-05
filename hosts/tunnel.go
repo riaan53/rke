@@ -119,13 +119,12 @@ func getSSHConfig(username, sshPrivateKeyString string, sshCertificateString str
 			return config, fmt.Errorf("Unable to parse SSH certificate: %v", err)
 		}
 
-		if cert, ok := key.(*ssh.Certificate); ok {
-			signer, err = ssh.NewCertSigner(cert, signer)
-			if err != nil {
-				return config, err
-			}
-		} else {
+		if _, ok := key.(*ssh.Certificate); !ok {
 			return config, fmt.Errorf("Unable to cast public key to SSH Certificate")
+		}
+		signer, err = ssh.NewCertSigner(key.(*ssh.Certificate), signer)
+		if err != nil {
+			return config, err
 		}
 	}
 
