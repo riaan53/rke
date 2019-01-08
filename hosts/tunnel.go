@@ -114,8 +114,8 @@ func getSSHConfig(username, sshPrivateKeyString string, sshCertificateString str
 	}
 
 	if len(sshCertificateString) > 0 {
-		key, _, _, rest, err := ssh.ParseAuthorizedKey([]byte(sshCertificateString))
-		if err != nil || len(rest) > 0 {
+		key, _, _, _, err := ssh.ParseAuthorizedKey([]byte(sshCertificateString))
+		if err != nil {
 			return config, fmt.Errorf("Unable to parse SSH certificate: %v", err)
 		}
 
